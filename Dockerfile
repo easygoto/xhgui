@@ -6,7 +6,7 @@
 # build (build from source), prebuilt (use copy from last release image)
 ARG BUILD_SOURCE=build
 
-FROM alpine:3.12 AS base
+FROM alpine AS base
 ENV PHP_INI_DIR /etc/php7
 
 # ext-mongodb: build and stage
@@ -33,10 +33,8 @@ RUN set -x \
 		php-ctype \
 		php-fpm \
 		php-json \
-		php-pdo \
-		php-pdo_mysql \
-		php-pdo_pgsql \
-		php-pdo_sqlite \
+		php-mbstring \
+		php-openssl \
 		php-phar \
 		php-session \
 		php-simplexml \
@@ -85,7 +83,7 @@ FROM php AS build
 RUN apk add --no-cache php-phar
 WORKDIR /app
 ARG COMPOSER_FLAGS="--no-interaction --no-suggest --ansi --no-dev"
-COPY --from=composer:1.10 /usr/bin/composer /usr/bin/
+COPY --from=composer /usr/bin/composer /usr/bin/
 
 COPY --from=source /app/composer.* ./
 COPY --from=source /app/vendor ./vendor
