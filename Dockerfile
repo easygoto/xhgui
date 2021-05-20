@@ -6,7 +6,7 @@
 # build (build from source), prebuilt (use copy from last release image)
 ARG BUILD_SOURCE=build
 
-FROM alpine AS base
+FROM alpine:3.12 AS base
 ENV PHP_INI_DIR /etc/php7
 
 # ext-mongodb: build and stage
