@@ -22,15 +22,17 @@ register_shutdown_function(
             $cmd = basename($_SERVER['argv'][0]);
             $withArgCmd = implode(' ', $_SERVER['argv']);
 
-            if (strpos($withArgCmd, $_SERVER['PWD']) !== false) {
-                $url = $_SERVER['PWD'] . '/' . substr($withArgCmd, strlen($_SERVER['PWD']) + 1);
-            } elseif ($cmd === $_SERVER['argv'][0] || strpos($withArgCmd, '/') !== false) {
-                $url = $_SERVER['PWD'] . '/' . $withArgCmd;
-            } else {
-                $url = $withArgCmd;
+            $_SERVER['PWD'] = trim($_SERVER['PWD'] ?? '');
+            $url = $withArgCmd;
+            if ($_SERVER['PWD']) {
+                if (strpos($withArgCmd, $_SERVER['PWD']) !== false) {
+                    $url = $_SERVER['PWD'] . '/' . substr($withArgCmd, strlen($_SERVER['PWD']) + 1);
+                } elseif ($_SERVER['PWD'] !== '/root' && ($cmd === $_SERVER['argv'][0] || strpos($withArgCmd, '/') !== false)) {
+                    $url = $_SERVER['PWD'] . '/' . $withArgCmd;
+                }
             }
 
-            $uri = $url;
+            $uri = explode(' ', $url)[0] ?? '';
         } else {
             // fpm 模式
             $url = "$_SERVER[REQUEST_METHOD] $_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
